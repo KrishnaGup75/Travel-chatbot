@@ -7,7 +7,7 @@ import uuid
 app = Flask(__name__)
 
 # --- Configuration ---
-api_key = "AIzaSyB6iB1SsCkEWOBsPfcrPgVwHOkqpSpg1Cs"
+api_key = ""
 genai.configure(api_key=api_key)
 
 # --- AI Model Initialization ---
@@ -100,3 +100,4 @@ def serve_audio(filename):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
