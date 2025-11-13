@@ -1,0 +1,8 @@
+User: hi
+User: hi
+User: hi
+Bot: Hello there! I'm your Digital Tourism Expert. How can I help you plan your next adventure?
+User: i'm in delhi
+Bot: Great! Delhi is a vibrant city. Are you looking for things to do *in* Delhi, or perhaps some travel ideas *from* Delhi?
+User: hi
+Bot: Hi again! Ready to continue planning your Delhi adventure?
