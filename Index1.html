@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Tourism Expert</title>
+<style>
+    :root {
+        --primary: #d62828;
+        --secondary: #003049;
+        --accent: #f77f00;
+        --user-msg: #e9f1ff;
+        --bot-msg: #eafaf1;
+        --radius: 14px;
+    }
+
+    body {
+        font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: var(--secondary);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background:
+            linear-gradient(rgba(255, 255, 255, 0.8), rgba(255,255,255,0.9)),
+            url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    header {
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        color: #fff;
+        text-align: center;
+        padding: 25px 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 1.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    header p {
+        margin: 6px 0 0;
+        opacity: 0.85;
+    }
+
+    .chat-container {
+        flex: 1;
+        max-width: 900px;
+        margin: 40px auto;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(12px);
+        border-radius: var(--radius);
+        box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .conversation {
+        padding: 20px;
+        flex-grow: 1;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+    }
+
+    .message {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        animation: popUp 0.3s ease;
+    }
+
+    @keyframes popUp {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-message {
+        align-self: flex-end;
+        background: var(--user-msg);
+        color: var(--secondary);
+        padding: 12px 16px;
+        border-radius: 16px 16px 0 16px;
+        max-width: 75%;
+        word-wrap: break-word;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        background: linear-gradient(135deg, var(--bot-msg), #f0fdf4);
+        color: #064e3b;
+        padding: 14px 18px;
+        border-radius: 16px 16px 16px 0;
+        max-width: 75%;
+        word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-left: 4px solid #2a9d8f;
+    }
+
+    .bot-message pre {
+        font-family: inherit;
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.8;
+        letter-spacing: 0.3px;
+        font-size: 0.95rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .bot-message strong {
+        color: #047857;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .bot-message em {
+        color: #0d7377;
+        font-style: italic;
+        font-weight: 500;
+    }
+
+    .bot-message b {
+        color: #047857;
+        font-weight: 700;
+    }
+
+    .bot-message i {
+        color: #0d7377;
+        font-style: italic;
+        font-weight: 500;
+    }
+
+    /* New modern loader */
+    .loader {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px 16px;
+        background: var(--bot-msg);
+        border-radius: 16px 16px 16px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .loader span {
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        animation: wave 1.4s infinite ease-in-out;
+    }
+
+    .loader span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .loader span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes wave {
+        0%, 80%, 100% { transform: scale(0.7); opacity: 0.6; }
+        40% { transform: scale(1.2); opacity: 1; }
+    }
+
+    form {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f0f2f5;
+        border-top: 1px solid #ddd;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #ccc;
+        border-radius: var(--radius);
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s ease;
+    }
+
+    input[type="text"]:focus {
+        border-color: var(--primary);
+    }
+
+    input[type="submit"] {
+        padding: 12px 20px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 10px;
+        transition: background 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+        background: #b91c1c;
+    }
+
+    #micBtn {
+        background: var(--secondary);
+        color: #fff;
+        border: none;
+        font-size: 1.3rem;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+    }
+
+    #micBtn.listening {
+        background: #2a9d8f;
+        animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(42,157,143,0.4); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(42,157,143,0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(42,157,143,0); }
+    }
+
+    @media (max-width: 600px) {
+        header h1 { font-size: 1.4rem; }
+        .conversation { padding: 10px; }
+        input[type="text"] { font-size: 0.9rem; }
+        .chat-container { margin: 20px; }
+    }
+</style>
+</head>
+<body>
+<header>
+    <h1>🌍 Digital Tourism Expert</h1>
+    <p>Your AI-powered travel companion</p>
+</header>
+
+<div class="chat-container">
+    <div class="conversation" id="chatBox">
+        {% for message in conversation %}
+            <div class="message">
+                {% if message.speaker == 'User' %}
+                    <div class="user-message">{{ message.text }}</div>
+                {% elif message.speaker == 'Bot' %}
+                    <div class="bot-message"><pre>{{ message.text }}</pre></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="chatForm">
+        <input type="text" name="prompt" id="prompt" placeholder="Type or speak your message..." autocomplete="off">
+        <button type="button" id="micBtn" title="Speak">🎤</button>
+        <!-- text-only toggle removed; audio enabled by default -->
+        <input type="submit" value="Send">
+    </form>
+</div>
+
+<script>
+    const chatBox = document.getElementById("chatBox");
+    const form = document.getElementById("chatForm");
+    const micBtn = document.getElementById("micBtn");
+    const promptInput = document.getElementById("prompt");
+    // Track the currently playing audio element so we can stop it reliably
+    let currentAudio = null;
+    // --- Speech Recognition ---
+    let recognition;
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        micBtn.addEventListener('click', () => {
+            // Stop any currently playing audio (prefer the tracked instance)
+            try {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio.remove();
+                    currentAudio = null;
+                }
+            } catch (e) { /* ignore */ }
+
+            const audioElements = chatBox.querySelectorAll('audio');
+            audioElements.forEach(audio => {
+                try { audio.pause(); audio.currentTime = 0; audio.remove(); } catch(e){}
+            });
+
+            recognition.start();
+            micBtn.classList.add("listening");
+        });
+
+        recognition.onresult = (event) => {
+            const speechResult = event.results[0][0].transcript;
+            promptInput.value = speechResult;
+            micBtn.classList.remove("listening");
+            
+            // Auto-submit the form after speech recognition
+            form.dispatchEvent(new Event('submit'));
+        };
+
+        recognition.onerror = () => {
+            micBtn.classList.remove("listening");
+            alert("Speech recognition error");
+        };
+    } else {
+        micBtn.disabled = true;
+        micBtn.title = "Speech recognition not supported";
+    }
+
+    // --- Send Message ---
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const userText = promptInput.value.trim();
+        if (!userText) return;
+
+        // Stop the tracked current audio and any stray audio elements
+        try {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio.remove();
+                currentAudio = null;
+            }
+        } catch(e){}
+        const audioElements = chatBox.querySelectorAll('audio');
+        audioElements.forEach(audio => { try { audio.pause(); audio.currentTime = 0; audio.remove(); } catch(e){} });
+
+        chatBox.innerHTML += `<div class="message"><div class="user-message">${userText}</div></div>`;
+        promptInput.value = '';
+
+        // Add loader
+        const loader = document.createElement("div");
+        loader.classList.add("message");
+        loader.innerHTML = `
+            <div class="loader" id="botLoader">
+                <span></span><span></span><span></span>
+            </div>`;
+        chatBox.appendChild(loader);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        const formData = new FormData();
+        formData.append("prompt", userText);
+
+        try {
+            const response = await fetch("/chat", { method: "POST", body: formData });
+            const data = await response.json();
+
+            document.getElementById("botLoader")?.parentNode.remove();
+
+            if (data.bot) {
+                // Stop and remove any previous audio, then create a single controlled audio element
+                try {
+                    if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.remove(); currentAudio = null; }
+                } catch(e){}
+                const stray = document.querySelectorAll('audio');
+                stray.forEach(a => { try { a.pause(); a.currentTime = 0; a.remove(); } catch(e){} });
+
+                // Build message nodes via DOM so we can attach the audio element reliably
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message');
+
+                const botDiv = document.createElement('div');
+                botDiv.classList.add('bot-message');
+                const pre = document.createElement('pre');
+                // Set innerHTML to render HTML tags (bold, italic, etc.)
+                pre.innerHTML = data.bot;
+                botDiv.appendChild(pre);
+                msgDiv.appendChild(botDiv);
+
+                // Create and play audio if available (hidden but auto-plays)
+                if (data.audio) {
+                    const audio = document.createElement('audio');
+                    audio.autoplay = true;
+                    audio.hidden = true;
+                    audio.src = data.audio;
+                    // Set desired playback speed once metadata is available
+                    audio.addEventListener('loadedmetadata', () => { try { audio.playbackRate = 1.5; } catch(e){} });
+                    // When this audio starts playing, ensure it is the tracked one
+                    audio.addEventListener('play', () => {
+                        try {
+                            if (currentAudio && currentAudio !== audio) { currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.remove(); }
+                        } catch(e){}
+                        currentAudio = audio;
+                    });
+                    audio.addEventListener('ended', () => { if (currentAudio === audio) currentAudio = null; });
+                    msgDiv.appendChild(audio);
+                }
+
+                chatBox.appendChild(msgDiv);
+            }
+        } catch (err) {
+            document.getElementById("botLoader")?.parentNode.remove();
+            chatBox.innerHTML += `<div class="message bot-message"><pre>⚠️ Something went wrong. Please try again.</pre></div>`;
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+</script>
+</body>
+</html>
+
